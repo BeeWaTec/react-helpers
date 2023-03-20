@@ -58,14 +58,19 @@ const instance = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+    validateStatus: (status) => {
+        return status >= 200 && status < 500;
+    }
 });
 
 console.log('Set request interceptor for axios instance');
 instance.interceptors.request.use(
     (config) => {
-        const accessToken = localStorage.getItem("access_token");
-        if (accessToken && typeof config !== 'undefined' && typeof config.headers !== 'undefined') {
-            config.headers.Authorization = `Bearer ${accessToken}`;
+        if(typeof localStorage !== 'undefined') {
+            const accessToken = localStorage.getItem("access_token");
+            if (accessToken && typeof config !== 'undefined' && typeof config.headers !== 'undefined') {
+                config.headers.Authorization = `Bearer ${accessToken}`;
+            }
         }
         return config;
     }
@@ -82,7 +87,7 @@ instance.interceptors.response.use(
     },
     async (error: { config: any; response: { status: number; }; }) => {
         const originalRequest = error.config;
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (error.response && error.response.status === 401 && !originalRequest._retry) {
             await handleUnauthorized(error.response, originalRequest);
         }
         return Promise.reject(error);
@@ -137,7 +142,7 @@ const Fetcher = async ({ url, filter, orderBy, limit, offset, additionalParams }
             ...additionalParams,
         };
     }
-    console.log(`[Fetcher] Fetching ${url} with params: ${JSON.stringify(params)}`);
+    console.log(`[Fetcher] Fetching ${instance.defaults.baseURL}${url} with params: ${JSON.stringify(params)}`);
     if (Object.keys(params).length > 0) {
         const res = await instance.get(url, { params });
         return res.data;
