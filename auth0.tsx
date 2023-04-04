@@ -34,4 +34,4 @@ function checkIfLoggedIn(user: any | null){
     }
 }
 
-export { checkIfAdmin, checkIfLoggedIn }
+export { checkIfAdmin, checkIfLoggedIn, userHasRole };
