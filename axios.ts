@@ -7,6 +7,12 @@ const loginURL = process.env.NEXT_PUBLIC_LOGIN_URL ?? `${baseURL}/auth/login`;
 
 async function handleUnauthorized(response: any, originalRequest: any) {
 
+    // Check if URL contains exchange code -> Don't redirect to login page -> Else try to refresh token or redirect to login page
+    if (window.location.href.indexOf('code=') > -1) {
+        console.log('Unauthorized - URL contains exchange code -> Don\'t redirect to login page');
+        return;
+    }
+
     if (response.status === 401 && !originalRequest._retry) {
         console.log('Unauthorized - Try to refresh token or redirect to login page');
 
