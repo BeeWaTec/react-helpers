@@ -1,8 +1,9 @@
 // Generate a default axios instance and export it
 
 import axios from 'axios';
+import { Capacitor } from '@capacitor/core';
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+const baseURL = (Capacitor.getPlatform() === 'web' ? process.env.NEXT_PUBLIC_API_URL : Capacitor.getPlatform() === 'android' ? process.env.NEXT_PUBLIC_API_URL_ANDROID : process.env.NEXT_PUBLIC_API_URL_IOS) ?? '/api';
 const loginURL = process.env.NEXT_PUBLIC_LOGIN_URL ?? `${baseURL}/auth/login`;
 
 async function handleUnauthorized(response: any, originalRequest: any) {
