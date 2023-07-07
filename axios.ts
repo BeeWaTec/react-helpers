@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Capacitor } from '@capacitor/core';
 
 const baseURL = (Capacitor.getPlatform() === 'web' ? process.env.NEXT_PUBLIC_API_URL : Capacitor.getPlatform() === 'android' ? process.env.NEXT_PUBLIC_API_URL_ANDROID : process.env.NEXT_PUBLIC_API_URL_IOS) ?? '/api';
+console.log(`Using base url: ${baseURL} for platform ${Capacitor.getPlatform()}`);
 const loginURL = process.env.NEXT_PUBLIC_LOGIN_URL ?? `${baseURL}/auth/login`;
 
 async function handleUnauthorized(response: any, originalRequest: any) {
