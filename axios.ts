@@ -6,6 +6,8 @@ import { Capacitor } from '@capacitor/core';
 const baseURL = (Capacitor.getPlatform() === 'web' ? process.env.NEXT_PUBLIC_API_URL : Capacitor.getPlatform() === 'android' ? process.env.NEXT_PUBLIC_API_URL_ANDROID : process.env.NEXT_PUBLIC_API_URL_IOS) ?? '/api';
 console.log(`Using base url: ${baseURL} for platform ${Capacitor.getPlatform()}`);
 const loginURL = process.env.NEXT_PUBLIC_LOGIN_URL ?? `${baseURL}/auth/login`;
+const tokenRefreshURL = process.env.NEXT_PUBLIC_TOKEN_REFRESH_URL ?? `${baseURL}/auth/token`;
+let ongoingRefreshTokenRequest = false;
 
 async function handleUnauthorized(response: any, originalRequest: any) {
 
@@ -21,9 +23,15 @@ async function handleUnauthorized(response: any, originalRequest: any) {
         originalRequest._retry = true;
         const refreshToken = localStorage.getItem("refresh_token");
         if (refreshToken) {
+            if(ongoingRefreshTokenRequest) {
+                console.log('Refresh token request is already ongoing, waiting for it to finish');
+                await new Promise(r => setTimeout(r, 1000));
+                return axios(originalRequest.responseURL);
+            }
             try {
+                ongoingRefreshTokenRequest = true;
                 console.log(`refresh_token found, try to refresh token`);
-                const response = await axios.post(`${loginURL}`, {
+                const response = await axios.post(`${tokenRefreshURL}`, {
                     refresh_token: refreshToken,
                 });
                 console.log(`Status: ${response.status}`);
@@ -36,6 +44,9 @@ async function handleUnauthorized(response: any, originalRequest: any) {
                 }
             } catch (e) {
                 console.warn(e);
+            }
+            finally {
+                ongoingRefreshTokenRequest = false;
             }
         }
         else {
