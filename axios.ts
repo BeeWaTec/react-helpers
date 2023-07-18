@@ -78,7 +78,7 @@ const instance = axios.create({
         'Content-Type': 'application/json',
     },
     validateStatus: (status) => {
-        return status >= 200 && status < 500;
+        return true
     }
 });
 
