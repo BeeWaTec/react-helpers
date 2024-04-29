@@ -18,6 +18,6 @@ export default function downloadFile(
         method: 'GET',
         responseType: 'blob',
     }).then((response) => {
-        fileDownload(response.data, fileName, fileType);
+        fileDownload(response.data, fileName, fileType ?? undefined)
     });
 }

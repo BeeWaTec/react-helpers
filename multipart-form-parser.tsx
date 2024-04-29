@@ -2,7 +2,7 @@ import formidable from 'formidable';
 
 const form = formidable({ multiples: true }); // multiples means req.files will be an array
 
-export default async function multipartFormParser(req, _res, next) {
+export default async function multipartFormParser(req:any, _res:any, next:any) {
     const contentType = req.headers['content-type']
     if (contentType && contentType.indexOf('multipart/form-data') !== -1) {
         form.parse(req, (err, fields, files) => {

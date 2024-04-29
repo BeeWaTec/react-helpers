@@ -12,6 +12,7 @@ export function getRatingPercentage(likes: number, dislikes: number): number {
     if (likes < dislikes) {
         return 50 - ((dislikes - likes) / (likes + dislikes) * 50);
     }
+    return 50;
 }
 
 export function getRatingColor(rating: number): string {
@@ -20,7 +21,7 @@ export function getRatingColor(rating: number): string {
     rating = Math.min(Math.max(rating, 0), 100);
 
     // Check if chroma is available
-    if (!chroma) {
+    if (chroma) {
         return chroma.mix("#4CBBFC", "#ad0441", rating / 100, "rgb").hex();
     }
     else {

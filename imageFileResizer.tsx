@@ -9,7 +9,7 @@ interface resizeFileTypes {
     quality?: number,
     rotation?: number,
     outputType?: 'base64' | 'blob' | 'file'
-    responseUriFunc?: (responseUri: string | Blob | File) => void,
+    responseUriFunc?: (value: string | Blob | File | ProgressEvent<FileReader>) => void,
     minWidth?: number | null,
     minHeight?: number | null,
 }
@@ -22,7 +22,7 @@ export default function resizeFile(
         quality = 100,
         rotation = 0,
         outputType = 'blob',
-        responseUriFunc = null,
+        responseUriFunc = undefined,
         minWidth = null,
         minHeight = null
     }: resizeFileTypes
@@ -32,7 +32,7 @@ export default function resizeFile(
         file = new Blob([file], { type: (file as File).type });
     }
 
-    return new Promise<File | string | Blob>((resolve) => {
+    return new Promise<string | Blob | File | ProgressEvent<FileReader>>((resolve) => {
         Resizer.imageFileResizer(
             file as Blob,
             maxWidth,
@@ -40,12 +40,12 @@ export default function resizeFile(
             compressFormat,
             quality,
             rotation,
-            responseUriFunc != null ? responseUriFunc : (_uri : string | Blob | File) => {
-                resolve(_uri);
+            responseUriFunc ? responseUriFunc : (value: string | Blob | File | ProgressEvent<FileReader>) => {
+                resolve(value);
             },
             outputType,
-            minWidth,
-            minHeight
+            minWidth ?? maxWidth,
+            minHeight ?? maxHeight
         );
     })
 }

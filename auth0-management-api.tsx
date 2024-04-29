@@ -14,9 +14,9 @@ class Auth0ManagementAPI {
         this.domain = domain;
 
         // Get information from .env with names AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, and AUTH0_AUDIENCE
-        this.clientID = process.env[`AUTH0_${domain}_CLIENT_ID`];
-        this.clientSecret = process.env[`AUTH0_${domain}_CLIENT_SECRET`];
-        this.audience = process.env[`AUTH0_${domain}_AUDIENCE`];
+        this.clientID = process.env[`AUTH0_${domain}_CLIENT_ID`] as string;
+        this.clientSecret = process.env[`AUTH0_${domain}_CLIENT_SECRET`] as string;
+        this.audience = process.env[`AUTH0_${domain}_AUDIENCE`] as string;
         this.tokenEndpoint = `https://${domain}/oauth/token`;
     }
 
